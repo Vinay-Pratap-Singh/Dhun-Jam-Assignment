@@ -3,6 +3,16 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "./helper/axiosInstance";
 import toast from "react-hot-toast";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  LinearScale,
+  CategoryScale,
+  Colors,
+  BarController,
+  BarElement,
+  Legend,
+} from "chart.js";
 
 type IAmount = {
   category_6: number;
@@ -20,6 +30,15 @@ type IUserDetails = {
   amount: IAmount;
 };
 
+ChartJS.register(
+  LinearScale,
+  CategoryScale,
+  Colors,
+  BarController,
+  BarElement,
+  Legend
+);
+
 const App = () => {
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState<IUserDetails>();
@@ -30,7 +49,37 @@ const App = () => {
     formState: { isSubmitting },
     register,
     setValue,
+    watch,
   } = useForm<IUserDetails>({ defaultValues: { ...userDetails } });
+
+  // data for chart
+  const data = {
+    labels: ["Custom", "Category1", "Category2", "Category3", "Category4"],
+    datasets: [
+      {
+        label: "Amount Chart",
+        backgroundColor: "#F0C3F1",
+        borderColor: "#ffffff",
+        borderWidth: 1,
+        hoverBackgroundColor: "#edb8ef",
+        data: [
+          watch("amount.category_6"),
+          watch("amount.category_7"),
+          watch("amount.category_8"),
+          watch("amount.category_9"),
+          watch("amount.category_10"),
+        ],
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
 
   // function to handle data update
   const onSubmit: SubmitHandler<IUserDetails> = async (data) => {
@@ -67,7 +116,7 @@ const App = () => {
         );
       }
     })();
-  }, [navigate]);
+  }, [navigate, setValue]);
 
   return (
     <main className="flex justify-center min-h-screen text-white bg-black">
@@ -116,7 +165,9 @@ const App = () => {
             <p>Custom song request amount-</p>
             <input
               type="number"
-              className="w-full p-2 text-center bg-transparent border rounded-xl"
+              className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
+                !willCharge && "bg-gray-500"
+              }`}
               disabled={!willCharge}
               {...register("amount.category_6", {
                 min: {
@@ -131,7 +182,9 @@ const App = () => {
             <div className="flex items-center justify-between gap-5">
               <input
                 type="number"
-                className="w-full p-2 bg-transparent border rounded-xl"
+                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
+                  !willCharge && "bg-gray-500"
+                }`}
                 disabled={!willCharge}
                 {...register("amount.category_7", {
                   min: {
@@ -142,7 +195,9 @@ const App = () => {
               />
               <input
                 type="number"
-                className="w-full p-2 bg-transparent border rounded-xl"
+                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
+                  !willCharge && "bg-gray-500"
+                }`}
                 disabled={!willCharge}
                 {...register("amount.category_8", {
                   min: {
@@ -153,7 +208,9 @@ const App = () => {
               />
               <input
                 type="number"
-                className="w-full p-2 bg-transparent border rounded-xl"
+                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
+                  !willCharge && "bg-gray-500"
+                }`}
                 disabled={!willCharge}
                 {...register("amount.category_9", {
                   min: {
@@ -164,7 +221,9 @@ const App = () => {
               />
               <input
                 type="number"
-                className="w-full p-2 bg-transparent border rounded-xl"
+                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
+                  !willCharge && "bg-gray-500"
+                }`}
                 disabled={!willCharge}
                 {...register("amount.category_10", {
                   min: {
@@ -176,9 +235,19 @@ const App = () => {
             </div>
           </div>
 
+          {/* adding the chart */}
+          {willCharge && (
+            <div className="my-10">
+              <Bar data={data} options={options} />
+            </div>
+          )}
+
+          {/* submit button */}
           <button
             disabled={!willCharge}
-            className="bg-btnPrimaryColor hover:border-[1px] hover:border-btnSecondaryColor transition-all ease-in-out duration-300 w-full font-semibold py-2 rounded-xl mt-10 my-3"
+            className={`bg-btnPrimaryColor hover:border-[1px] hover:border-btnSecondaryColor transition-all ease-in-out duration-300 w-full font-semibold py-2 rounded-xl ${
+              !willCharge && "bg-gray-500"
+            }`}
           >
             {isSubmitting ? "Updating ..." : "Save"}
           </button>
