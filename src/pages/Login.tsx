@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../helper/axiosInstance";
+import { toast } from "react-hot-toast";
 
 type ILoginData = {
   username: string;
@@ -8,6 +10,7 @@ type ILoginData = {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const {
@@ -17,37 +20,62 @@ const Login = () => {
   } = useForm<ILoginData>();
 
   // function to handle form submit
-  const onSubmit: SubmitHandler<ILoginData> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<ILoginData> = async (data) => {
+    try {
+      const res = await axiosInstance.post("/admin/login", data);
+      if (res?.data?.status === 200) {
+        toast.success("Login successfull");
+        localStorage.setItem("data", JSON.stringify(res?.data?.data));
+        navigate("/");
+      }
+    } catch (error: any) {
+      toast.error(
+        error?.response ? error?.response?.data?.ui_err_msg : "Failed to login"
+      );
+    }
   };
 
   return (
     <div className="flex items-center justify-center h-screen bg-black text-white">
       {/* form container */}
-      <div className="space-y-10 w-[600px]">
+      <div className="space-y-10 px-2 sm:px-0 w-full sm:w-[600px]">
         <h1 className="text-3xl font-semibold text-center">
           Venue Admin Login
         </h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* for username */}
-          <input
-            className="p-2 rounded-xl w-full text-black"
-            type="text"
-            placeholder="Username"
-            {...register("username")}
-          />
+          <div>
+            <input
+              className="p-2 rounded-xl w-full text-black"
+              type="text"
+              placeholder="Username"
+              {...register("username", {
+                required: { value: true, message: "Please enter username" },
+              })}
+            />
+
+            {/* for displaying error */}
+            {errors?.username && (
+              <p className="text-sm text-red-500 mt-2">
+                * {errors?.username?.message}
+              </p>
+            )}
+          </div>
 
           {/* for password */}
-          <div className="relative flex items-center mt-5">
+          <div className="relative flex flex-col mt-5">
             <input
               className="p-2 rounded-xl w-full text-black"
               type={isPasswordVisible ? "text" : "password"}
               placeholder="Password"
-              {...register("password")}
+              {...register("password", {
+                required: { value: true, message: "Please enter password" },
+              })}
             />
             {isPasswordVisible ? (
               <button
-                className="absolute top-1/2 transform -translate-y-1/2 right-2 text-black"
+                type="button"
+                className="absolute self-center transform translate-y-[40%] right-2 text-black"
                 onClick={() => setIsPasswordVisible(false)}
               >
                 <svg
@@ -67,7 +95,8 @@ const Login = () => {
               </button>
             ) : (
               <button
-                className="absolute top-1/2 transform -translate-y-1/2 right-2 text-black"
+                type="button"
+                className="absolute self-center transform translate-y-[40%] right-2 text-black"
                 onClick={() => setIsPasswordVisible(true)}
               >
                 <svg
@@ -91,10 +120,17 @@ const Login = () => {
                 </svg>
               </button>
             )}
+
+            {/* for displaying error */}
+            {errors?.password && (
+              <p className="text-sm text-red-500 mt-2">
+                * {errors?.password?.message}
+              </p>
+            )}
           </div>
 
           <button className="bg-btnPrimaryColor hover:border-[1px] hover:border-btnSecondaryColor transition-all ease-in-out duration-300 w-full font-semibold py-2 rounded-xl mt-10 my-3">
-            Sign In
+            {isSubmitting ? "Signing in ..." : "Sign In"}
           </button>
           <Link to={"#"}>
             <p className="text-center text-sm">New Registeration ?</p>
