@@ -25,7 +25,7 @@ const Login = () => {
       const res = await axiosInstance.post("/admin/login", data);
       if (res?.data?.status === 200) {
         toast.success("Login successfull");
-        localStorage.setItem("data", JSON.stringify(res?.data?.data));
+        localStorage.setItem("authData", JSON.stringify(res?.data?.data));
         navigate("/");
       }
     } catch (error: any) {
@@ -36,7 +36,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-black text-white">
+    <div className="flex items-center justify-center h-screen text-white bg-black">
       {/* form container */}
       <div className="space-y-10 px-2 sm:px-0 w-full sm:w-[600px]">
         <h1 className="text-3xl font-semibold text-center">
@@ -46,7 +46,7 @@ const Login = () => {
           {/* for username */}
           <div>
             <input
-              className="p-2 rounded-xl w-full text-black"
+              className="w-full p-2 bg-transparent border rounded-xl"
               type="text"
               placeholder="Username"
               {...register("username", {
@@ -56,7 +56,7 @@ const Login = () => {
 
             {/* for displaying error */}
             {errors?.username && (
-              <p className="text-sm text-red-500 mt-2">
+              <p className="mt-2 text-sm text-red-500">
                 * {errors?.username?.message}
               </p>
             )}
@@ -65,7 +65,7 @@ const Login = () => {
           {/* for password */}
           <div className="relative flex flex-col mt-5">
             <input
-              className="p-2 rounded-xl w-full text-black"
+              className="w-full p-2 bg-transparent border rounded-xl"
               type={isPasswordVisible ? "text" : "password"}
               placeholder="Password"
               {...register("password", {
@@ -75,14 +75,14 @@ const Login = () => {
             {isPasswordVisible ? (
               <button
                 type="button"
-                className="absolute self-center transform translate-y-[40%] right-2 text-black"
+                className="absolute self-center transform translate-y-[40%] right-2"
                 onClick={() => setIsPasswordVisible(false)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 h-6"
                 >
@@ -96,14 +96,14 @@ const Login = () => {
             ) : (
               <button
                 type="button"
-                className="absolute self-center transform translate-y-[40%] right-2 text-black"
+                className="absolute self-center transform translate-y-[40%] right-2"
                 onClick={() => setIsPasswordVisible(true)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 h-6"
                 >
@@ -123,7 +123,7 @@ const Login = () => {
 
             {/* for displaying error */}
             {errors?.password && (
-              <p className="text-sm text-red-500 mt-2">
+              <p className="mt-2 text-sm text-red-500">
                 * {errors?.password?.message}
               </p>
             )}
@@ -133,7 +133,7 @@ const Login = () => {
             {isSubmitting ? "Signing in ..." : "Sign In"}
           </button>
           <Link to={"#"}>
-            <p className="text-center text-sm">New Registeration ?</p>
+            <p className="text-sm text-center">New Registeration ?</p>
           </Link>
         </form>
       </div>
