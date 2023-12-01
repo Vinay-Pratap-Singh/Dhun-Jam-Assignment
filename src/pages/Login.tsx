@@ -22,6 +22,10 @@ const Login = () => {
   // function to handle form submit
   const onSubmit: SubmitHandler<ILoginData> = async (data) => {
     try {
+      if (data?.password.length < 8) {
+        toast.error("Please enter a valid password");
+        return;
+      }
       const res = await axiosInstance.post("/admin/login", data);
       if (res?.data?.status === 200) {
         toast.success("Login successfull");

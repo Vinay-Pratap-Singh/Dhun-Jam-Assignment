@@ -184,8 +184,8 @@ const App = () => {
             <p>Custom song request amount-</p>
             <input
               type="number"
-              className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
-                !willCharge && "bg-gray-500"
+              className={`w-full p-2 text-center border rounded-xl transition-all duration-300 ease-in-out ${
+                willCharge ? "bg-transparent" : "bg-gray-500"
               } ${errors && errors?.amount?.category_6 && "border-red-500"}`}
               disabled={!willCharge}
               {...register("amount.category_6", {
@@ -201,8 +201,8 @@ const App = () => {
             <div className="flex items-center justify-between gap-2 sm:gap-5">
               <input
                 type="number"
-                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
-                  !willCharge && "bg-gray-500"
+                className={`w-full p-2 text-center border rounded-xl transition-all duration-300 ease-in-out ${
+                  willCharge ? "bg-transparent" : "bg-gray-500"
                 } ${errors && errors?.amount?.category_7 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_7", {
@@ -214,8 +214,8 @@ const App = () => {
               />
               <input
                 type="number"
-                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
-                  !willCharge && "bg-gray-500"
+                className={`w-full p-2 text-center border rounded-xl transition-all duration-300 ease-in-out ${
+                  willCharge ? "bg-transparent" : "bg-gray-500"
                 } ${errors && errors?.amount?.category_8 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_8", {
@@ -227,8 +227,8 @@ const App = () => {
               />
               <input
                 type="number"
-                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
-                  !willCharge && "bg-gray-500"
+                className={`w-full p-2 text-center border rounded-xl transition-all duration-300 ease-in-out ${
+                  willCharge ? "bg-transparent" : "bg-gray-500"
                 } ${errors && errors?.amount?.category_9 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_9", {
@@ -240,8 +240,8 @@ const App = () => {
               />
               <input
                 type="number"
-                className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
-                  !willCharge && "bg-gray-500"
+                className={`w-full p-2 text-center border rounded-xl transition-all duration-300 ease-in-out ${
+                  willCharge ? "bg-transparent" : "bg-gray-500"
                 } ${errors && errors?.amount?.category_10 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_10", {
