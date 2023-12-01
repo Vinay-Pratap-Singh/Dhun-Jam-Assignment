@@ -23,6 +23,7 @@ type IUserDetails = {
 const App = () => {
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState<IUserDetails>();
+  const [willCharge, setWillCharge] = useState<boolean>();
 
   const {
     handleSubmit,
@@ -56,6 +57,7 @@ const App = () => {
           setValue("location", res?.data?.data?.location);
           setValue("amount", res?.data?.data?.amount);
           setValue("charge_customers", res?.data?.data?.charge_customers);
+          setWillCharge(res?.data?.data?.charge_customers);
         }
       } catch (error: any) {
         toast.error(
@@ -86,7 +88,11 @@ const App = () => {
                   value={"yes"}
                   id="yes"
                   className="mr-2"
-                  {...register("charge_customers", { value: true })}
+                  checked={willCharge}
+                  onChange={() => {
+                    setWillCharge(true);
+                    setValue("charge_customers", true);
+                  }}
                 />
                 Yes
               </label>
@@ -96,7 +102,11 @@ const App = () => {
                   value={"no"}
                   id="no"
                   className="mr-2"
-                  {...register("charge_customers", { value: false })}
+                  checked={!willCharge}
+                  onChange={() => {
+                    setWillCharge(false);
+                    setValue("charge_customers", false);
+                  }}
                 />
                 No
               </label>
@@ -107,7 +117,7 @@ const App = () => {
             <input
               type="number"
               className="w-full p-2 text-center bg-transparent border rounded-xl"
-              disabled={!userDetails?.charge_customers}
+              disabled={!willCharge}
               {...register("amount.category_6", {
                 min: {
                   value: 99,
@@ -122,7 +132,7 @@ const App = () => {
               <input
                 type="number"
                 className="w-full p-2 bg-transparent border rounded-xl"
-                disabled={!userDetails?.charge_customers}
+                disabled={!willCharge}
                 {...register("amount.category_7", {
                   min: {
                     value: 79,
@@ -133,7 +143,7 @@ const App = () => {
               <input
                 type="number"
                 className="w-full p-2 bg-transparent border rounded-xl"
-                disabled={!userDetails?.charge_customers}
+                disabled={!willCharge}
                 {...register("amount.category_8", {
                   min: {
                     value: 59,
@@ -144,7 +154,7 @@ const App = () => {
               <input
                 type="number"
                 className="w-full p-2 bg-transparent border rounded-xl"
-                disabled={!userDetails?.charge_customers}
+                disabled={!willCharge}
                 {...register("amount.category_9", {
                   min: {
                     value: 39,
@@ -155,7 +165,7 @@ const App = () => {
               <input
                 type="number"
                 className="w-full p-2 bg-transparent border rounded-xl"
-                disabled={!userDetails?.charge_customers}
+                disabled={!willCharge}
                 {...register("amount.category_10", {
                   min: {
                     value: 19,
@@ -167,8 +177,7 @@ const App = () => {
           </div>
 
           <button
-            disabled={userDetails?.charge_customers}
-            type="submit"
+            disabled={!willCharge}
             className="bg-btnPrimaryColor hover:border-[1px] hover:border-btnSecondaryColor transition-all ease-in-out duration-300 w-full font-semibold py-2 rounded-xl mt-10 my-3"
           >
             {isSubmitting ? "Updating ..." : "Save"}
