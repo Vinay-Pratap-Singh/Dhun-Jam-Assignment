@@ -46,7 +46,7 @@ const App = () => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     register,
     setValue,
     watch,
@@ -81,9 +81,50 @@ const App = () => {
     },
   };
 
+  // function to get user details
+  const fetchUserDetails = async (authData: any) => {
+    try {
+      const res = await axiosInstance.get(`/admin/${authData?.id}`);
+
+      if (res?.data?.status === 200) {
+        setUserDetails(res?.data?.data);
+        setValue("id", res?.data?.data?.id);
+        setValue("name", res?.data?.data?.name);
+        setValue("location", res?.data?.data?.location);
+        setValue("amount", res?.data?.data?.amount);
+        setValue("charge_customers", res?.data?.data?.charge_customers);
+        setWillCharge(res?.data?.data?.charge_customers);
+      }
+    } catch (error: any) {
+      toast.error(
+        error?.response
+          ? error?.response?.data?.ui_err_msg
+          : "Failed to get data"
+      );
+    }
+  };
+
   // function to handle data update
   const onSubmit: SubmitHandler<IUserDetails> = async (data) => {
-    console.log(data);
+    try {
+      const res = await axiosInstance.put(`/admin/${userDetails?.id}`, {
+        amount: {
+          ...data?.amount,
+        },
+      });
+
+      if (res?.data?.status === 200) {
+        toast.success("Amount updated successfully");
+        const authData = JSON.parse(localStorage.getItem("authData") || "{}");
+        fetchUserDetails(authData);
+      }
+    } catch (error: any) {
+      toast.error(
+        error?.response
+          ? error?.response?.data?.ui_err_msg
+          : "Failed to update data"
+      );
+    }
   };
 
   // checking for token and getting user details
@@ -93,29 +134,7 @@ const App = () => {
       navigate("/login");
       return;
     }
-
-    // getting user details
-    (async () => {
-      try {
-        const res = await axiosInstance.get(`/admin/${authData?.id}`);
-        console.log(res?.data);
-        if (res?.data?.status === 200) {
-          setUserDetails(res?.data?.data);
-          setValue("id", res?.data?.data?.id);
-          setValue("name", res?.data?.data?.name);
-          setValue("location", res?.data?.data?.location);
-          setValue("amount", res?.data?.data?.amount);
-          setValue("charge_customers", res?.data?.data?.charge_customers);
-          setWillCharge(res?.data?.data?.charge_customers);
-        }
-      } catch (error: any) {
-        toast.error(
-          error?.response
-            ? error?.response?.data?.ui_err_msg
-            : "Failed to get data"
-        );
-      }
-    })();
+    fetchUserDetails(authData);
   }, [navigate, setValue]);
 
   return (
@@ -127,7 +146,7 @@ const App = () => {
 
         {/* container for options */}
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-2 sm:gap-5">
             {/* for user concent */}
             <p>Do you want to charge your customers for requesting songs?</p>
             <div className="flex items-center justify-center gap-5">
@@ -167,7 +186,7 @@ const App = () => {
               type="number"
               className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
                 !willCharge && "bg-gray-500"
-              }`}
+              } ${errors && errors?.amount?.category_6 && "border-red-500"}`}
               disabled={!willCharge}
               {...register("amount.category_6", {
                 min: {
@@ -179,12 +198,12 @@ const App = () => {
 
             {/* regular song */}
             <p>Regular song request amounts, from high to low-</p>
-            <div className="flex items-center justify-between gap-5">
+            <div className="flex items-center justify-between gap-2 sm:gap-5">
               <input
                 type="number"
                 className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
                   !willCharge && "bg-gray-500"
-                }`}
+                } ${errors && errors?.amount?.category_7 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_7", {
                   min: {
@@ -197,7 +216,7 @@ const App = () => {
                 type="number"
                 className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
                   !willCharge && "bg-gray-500"
-                }`}
+                } ${errors && errors?.amount?.category_8 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_8", {
                   min: {
@@ -210,7 +229,7 @@ const App = () => {
                 type="number"
                 className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
                   !willCharge && "bg-gray-500"
-                }`}
+                } ${errors && errors?.amount?.category_9 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_9", {
                   min: {
@@ -223,7 +242,7 @@ const App = () => {
                 type="number"
                 className={`w-full p-2 text-center bg-transparent border rounded-xl transition-all duration-300 ease-in-out ${
                   !willCharge && "bg-gray-500"
-                }`}
+                } ${errors && errors?.amount?.category_10 && "border-red-500"}`}
                 disabled={!willCharge}
                 {...register("amount.category_10", {
                   min: {
@@ -246,7 +265,7 @@ const App = () => {
           <button
             disabled={!willCharge}
             className={`bg-btnPrimaryColor hover:border-[1px] hover:border-btnSecondaryColor transition-all ease-in-out duration-300 w-full font-semibold py-2 rounded-xl ${
-              !willCharge && "bg-gray-500"
+              (!willCharge || errors?.amount) && "bg-gray-500 my-5"
             }`}
           >
             {isSubmitting ? "Updating ..." : "Save"}
